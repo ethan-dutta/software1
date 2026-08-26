@@ -3,29 +3,14 @@
 
 <body>
     <p name="demo" id="demo"></p>
+    <form method="GET" action="{% url 'index' %}">
+        {% csrf_token %}
+        <input type="text" name="textfield" placeholder="Enter team here...">
+
+        <button type="submit">Search</button>
+    </form>
 
     {{ content }}
-
-    <script>
-        function fetchjsondata() {
-            fetch("https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=arsenal")
-                .then((res) => {
-                    if (!res.ok) {
-                        throw new error
-                            (`http error! status: ${res.status}`);
-                    }
-                    return res.json();
-                })
-                .then((data) =>
-                    console.log(data))
-                .catch((error) =>
-                    console.error("unable to fetch data:", error));
-        }
-        document.getElementById("demo").innerHTML = data;
-
-
-    </script>
-    {{jsondata}}
 
 
 </body>

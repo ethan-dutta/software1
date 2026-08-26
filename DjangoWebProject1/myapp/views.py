@@ -1,3 +1,4 @@
+from re import A
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -8,23 +9,28 @@ from django.shortcuts import render
 import requests
 
 def index(request):
+    if request.method == "GET":  
+        home_team = request.GET.get("home_team")
+        print(f"Home Team: {home_team}")
+        for event_id in event_ids:
+            api_call = requests.get(f"https://www.thesportsdb.com/api/v1/json/123/lookupevent.php?id={event_id}")
+            if api_call is not None:
+                storage = api_call.json()
+            for event in storage["events"]:
+                date_event = event["dateEvent"]
+                home_team = event["strHomeTeam"]
+                away_team = event["strAwayTeam"]
+                home_score = event["intHomeScore"]
+                away_score = event["intAwayScore"]
+
+            print(f"{date_event}: {home_team} vs {away_team}")
     return render(request, "myapp/index.html")
 
 
-def lookup_events(event_ids):
-    for event_id in event_ids:
-        api_call = requests.get(f"https://www.thesportsdb.com/api/v1/json/123/lookupevent.php?id={event_id}")
-        storage = api_call.json()
-        for event in storage["events"]:
-            date_event = event["dateEvent"]
-            home_team = event["strHomeTeam"]
-            away_team = event["strAwayTeam"]
-
-        print(f"{date_event}: {home_team} vs {away_team}")
 
 event_ids = [2052711, 2052712, 2052713, 2052714]
 
-lookup_events(event_ids)
+# index(event_ids)
 
 
 class MessageListCreateView(generics.ListCreateAPIView):

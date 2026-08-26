@@ -1,0 +1,32 @@
+<html>
+<head><title></title></head>
+
+<body>
+    <p name="demo" id="demo"></p>
+
+    {{ content }}
+
+    <script>
+        function fetchjsondata() {
+            fetch("https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=arsenal")
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new error
+                            (`http error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then((data) =>
+                    console.log(data))
+                .catch((error) =>
+                    console.error("unable to fetch data:", error));
+        }
+        document.getElementById("demo").innerHTML = data;
+
+
+    </script>
+    {{jsondata}}
+
+
+</body>
+</html>

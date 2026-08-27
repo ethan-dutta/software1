@@ -8,26 +8,30 @@ from .serializer import MessageSerializer
 from rest_framework.views import APIView
 from django.shortcuts import render
 import requests
-#https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t={teamoo}
+
 def index(request):
     context = {}
     if request.method == "GET":  
         teamoo = request.GET.get("textfield")
         print(f"Teamoo: {teamoo}")
         if teamoo:
-            api_call = requests.get(f"https://www.thesportsdb.com/api/v2/json/livescore/soccer")
+            api_call = requests.get(f"https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t={teamoo}")
             if api_call.status_code == 200:
                 storage = api_call.json()
-                for team in storage["teams"]:
-                    #date_event = team["dateEvent"]
-                    home_team = team["intHomeScore"]
-                    away_team = team["intAwayScore"]
+                home_id = storage["teams"][0]["idTeam"]
+                api_specific = requests.get(f"https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id={home_id}")
+                data = api_specific.json()
+                print(data)
+
+                for result in data["results"]:
+                    home_team= result["strHomeTeam"]
+                    away_team = result["strAwayTeam"]
+                    home_score = result["intHomeScore"]
+                    away_score = result["intAwayScore"]
+                    context["home_score"] = home_score
+                    context["away_score"] = away_score
                     context["home_team"] = home_team
                     context["away_team"] = away_team
-                    # home_score = team["intHomeScore"]
-                    # away_score = team["intAwayScore"]
-
-            print(f"{home_team} vs {away_team}")
     return render(request, "myapp/index.html", context)
 
 

@@ -2,6 +2,75 @@
 <head><title></title></head>
 
 <body>
+
+    <!--<button id="win" type="button">Win</button>
+    <button id="lose" type="button">Lose</button>
+    <button id="draw" type="button">Draw</button>
+    <p name="winpercent" id="wp"></p>
+    <p name="losepercent" id="lp"></p>
+    <p name="drawpercent" id="dp"></p>
+    <script>
+        var wpp = 0;
+        var lpp = 0;
+        var dpp = 0;
+        var total = wpp + lpp + dpp;
+        document.getElementById('win').onclick = function () {
+            wpp++;
+            getElementById('wp').innerHTML = "Win Percentage: " + (wpp / total) * 100 + "%";
+        };
+        document.getElementById('lose').onclick = function () {
+            lpp++;
+            getElementById('lp').innerHTML = "Win Percentage: " + (lpp / total) * 100 + "%";
+        };
+        document.getElementById('draw').onclick = function () {
+            dpp++;
+            getElementById('dp').innerHTML = "Win Percentage: " + (dpp / total) * 100 + "%";
+        };
+
+    </script>-->
+
+    <button id="win" type="button">Win</button>
+    <button id="lose" type="button">Lose</button>
+    <button id="draw" type="button">Draw</button>
+
+    <p id="wp"></p>
+    <p id="lp"></p>
+    <p id="dp"></p>
+
+    <script>
+        var wpp = 0;
+        var lpp = 0;
+        var dpp = 0;
+
+        function updatePercentages() {
+            var total = wpp + lpp + dpp;
+
+            document.getElementById('wp').innerHTML =
+                "Win Percentage: " + ((wpp / total) * 100).toFixed(1) + "%";
+
+            document.getElementById('lp').innerHTML =
+                "Lose Percentage: " + ((lpp / total) * 100).toFixed(1) + "%";
+
+            document.getElementById('dp').innerHTML =
+                "Draw Percentage: " + ((dpp / total) * 100).toFixed(1) + "%";
+        }
+
+        document.getElementById('win').onclick = function () {
+            wpp++;
+            updatePercentages();
+        };
+
+        document.getElementById('lose').onclick = function () {
+            lpp++;
+            updatePercentages();
+        };
+
+        document.getElementById('draw').onclick = function () {
+            dpp++;
+            updatePercentages();
+        };
+    </script>
+
     <p name="demo" id="demo"></p>
     <form method="GET" action="{% url 'index' %}">
         {% csrf_token %}
@@ -9,9 +78,8 @@
 
         <button type="submit">Search</button>
     </form>
-
-    {{ home_team }} vs {{away_team}}
-
-    n ah fam
+    {% if home_team %}
+    {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
+    {% endif %}
 </body>
 </html>

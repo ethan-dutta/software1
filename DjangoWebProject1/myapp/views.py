@@ -1,3 +1,4 @@
+from multiprocessing import context
 from re import A
 from django.shortcuts import render
 from rest_framework import generics, status
@@ -7,24 +8,27 @@ from .serializer import MessageSerializer
 from rest_framework.views import APIView
 from django.shortcuts import render
 import requests
-
+#https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t={teamoo}
 def index(request):
+    context = {}
     if request.method == "GET":  
-        home_team = request.GET.get("home_team")
-        print(f"Home Team: {home_team}")
-        for event_id in event_ids:
-            api_call = requests.get(f"https://www.thesportsdb.com/api/v1/json/123/lookupevent.php?id={event_id}")
-            if api_call is not None:
+        teamoo = request.GET.get("textfield")
+        print(f"Teamoo: {teamoo}")
+        if teamoo:
+            api_call = requests.get(f"https://www.thesportsdb.com/api/v2/json/livescore/soccer")
+            if api_call.status_code == 200:
                 storage = api_call.json()
-            for event in storage["events"]:
-                date_event = event["dateEvent"]
-                home_team = event["strHomeTeam"]
-                away_team = event["strAwayTeam"]
-                home_score = event["intHomeScore"]
-                away_score = event["intAwayScore"]
+                for team in storage["teams"]:
+                    #date_event = team["dateEvent"]
+                    home_team = team["intHomeScore"]
+                    away_team = team["intAwayScore"]
+                    context["home_team"] = home_team
+                    context["away_team"] = away_team
+                    # home_score = team["intHomeScore"]
+                    # away_score = team["intAwayScore"]
 
-            print(f"{date_event}: {home_team} vs {away_team}")
-    return render(request, "myapp/index.html")
+            print(f"{home_team} vs {away_team}")
+    return render(request, "myapp/index.html", context)
 
 
 

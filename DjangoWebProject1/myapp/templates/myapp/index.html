@@ -15,9 +15,9 @@
         var dpp = 0;
         function updatePercentages() {
             var total = wpp + lpp + dpp;
-            document.getElementById('wp').innerHTML = "Win Percentage: " + (wpp / total) * 100 + "%";
-            document.getElementById('lp').innerHTML = "Lose Percentage: " + (lpp / total) * 100 + "%";
-            document.getElementById('dp').innerHTML = "Draw Percentage: " + (dpp / total) * 100 + "%";
+            document.getElementById('wp').innerHTML = "Win Percentage: " + ((wpp / total) * 100).toFixed(1) + "%";
+            document.getElementById('lp').innerHTML = "Lose Percentage: " + ((lpp / total) * 100).toFixed(1) + "%";
+            document.getElementById('dp').innerHTML = "Draw Percentage: " + ((dpp / total) * 100).toFixed(1) + "%";
         }
         var total = wpp + lpp + dpp;
         document.getElementById('win').onclick = function () {
@@ -44,6 +44,15 @@
     </form>
     {% if home_team %}
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
+<script>
+        if ({{home_score}} > {{away_score}} & wpp >lpp+dpp) {
+            document.getElementById("demo").innerHTML = "Win";
+        } else if ({{home_score}} < {{away_score}}) {
+            document.getElementById("demo").innerHTML = "Lose";
+        } else {
+            document.getElementById("demo").innerHTML = "Draw";
+        }
+</script>
     {% endif %}
 </body>
 </html>

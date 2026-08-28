@@ -33,6 +33,7 @@
             updatePercentages();
         };
 
+
     </script>
 
     <p name="demo" id="demo"></p>
@@ -44,15 +45,16 @@
     </form>
     {% if home_team %}
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
-<script>
-        if ({{home_score}} > {{away_score}} & wpp >lpp+dpp) {
+
+    {% endif %}
+    <!--<script>
+        if ({{home_score}} > {{away_score}}) {
             document.getElementById("demo").innerHTML = "Win";
         } else if ({{home_score}} < {{away_score}}) {
             document.getElementById("demo").innerHTML = "Lose";
         } else {
             document.getElementById("demo").innerHTML = "Draw";
         }
-</script>
-    {% endif %}
+    </script>-->
 </body>
 </html>

@@ -35,9 +35,6 @@ def index(request):
     return render(request, "myapp/index.html", context)
 
 
-
-event_ids = [2052711, 2052712, 2052713, 2052714]
-
 # index(event_ids)
 
 

@@ -9,10 +9,12 @@
     <p name="winpercent" id="wp"></p>
     <p name="losepercent" id="lp"></p>
     <p name="drawpercent" id="dp"></p>
+    <p name="currency" id="currency"></p>
     <script>
         var wpp = 0;
         var lpp = 0;
         var dpp = 0;
+        var lastClicked = null;
         function updatePercentages() {
             var total = wpp + lpp + dpp;
             document.getElementById('wp').innerHTML = "Win Percentage: " + ((wpp / total) * 100).toFixed(1) + "%";
@@ -23,15 +25,20 @@
         document.getElementById('win').onclick = function () {
             wpp++;
             updatePercentages();
+            localStorage.setItem('lastClicked', 'win');
         };
         document.getElementById('lose').onclick = function () {
             lpp++;
             updatePercentages();
+            localStorage.setItem('lastClicked', 'lose');
         };
         document.getElementById('draw').onclick = function () {
             dpp++;
             updatePercentages();
+            localStorage.setItem('lastClicked', 'win');
         };
+
+
 
 
     </script>
@@ -47,14 +54,28 @@
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
 
     {% endif %}
-    <!--<script>
-        if ({{home_score}} > {{away_score}}) {
-            document.getElementById("demo").innerHTML = "Win";
-        } else if ({{home_score}} < {{away_score}}) {
-            document.getElementById("demo").innerHTML = "Lose";
-        } else {
-            document.getElementById("demo").innerHTML = "Draw";
+<script>
+        var money = localStorage.getItem('money');
+        var currencyElement = document.getElementById("currency");
+        var lastClicked = localStorage.getItem('lastClicked');
+        if ({{ home_score }} > {{ away_score }} && lastClicked === 'win') {
+            winpercent = document.getElementById("wp").innerHTML;
+            document.getElementById("demo").innerHTML = "Winner!";
+            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(winpercent.split(": ")[1]);
+
+        } else if ({{ home_score }} < {{ away_score }} && lastClicked === 'lose') {
+            losepercent = document.getElementById("lp").innerHTML;
+            document.getElementById("demo").innerHTML = "Winner!";
+            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(losepercent.split(": ")[1]);
         }
-    </script>-->
+        else if ({{ home_score }} === {{ away_score }} && lastClicked === 'draw') {
+            drawpercent = document.getElementById("dp").innerHTML;
+            document.getElementById("demo").innerHTML = "Winner!";
+            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(drawpercent.split(": ")[1]);
+        } else {
+            document.getElementById("demo").innerHTML = "Loser!";
+        }
+
+</script>
 </body>
 </html>

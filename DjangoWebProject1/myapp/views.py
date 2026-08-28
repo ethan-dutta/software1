@@ -11,6 +11,8 @@ import requests
 
 def index(request):
     context = {}
+    money = 1000
+    context["money"] = money
     if request.method == "GET":  
         teamoo = request.GET.get("textfield")
         print(f"Teamoo: {teamoo}")

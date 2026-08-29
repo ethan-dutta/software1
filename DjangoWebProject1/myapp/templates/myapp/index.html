@@ -11,15 +11,22 @@
     <p name="drawpercent" id="dp"></p>
     <p name="currency" id="currency"></p>
     <script>
-        var wpp = 0;
-        var lpp = 0;
-        var dpp = 0;
+        wpp = parseInt(localStorage.getItem('wpp')) || 0;
+        lpp = parseInt(localStorage.getItem('lpp')) || 0;
+        dpp = parseInt(localStorage.getItem('dpp')) || 0;
         var lastClicked = null;
+        var oo = 100;
         function updatePercentages() {
             var total = wpp + lpp + dpp;
-            document.getElementById('wp').innerHTML = "Win Percentage: " + ((wpp / total) * 100).toFixed(1) + "%";
-            document.getElementById('lp').innerHTML = "Lose Percentage: " + ((lpp / total) * 100).toFixed(1) + "%";
-            document.getElementById('dp').innerHTML = "Draw Percentage: " + ((dpp / total) * 100).toFixed(1) + "%";
+            var winpercent = Number(((wpp / total) * 100).toFixed(1))
+            var losepercent = Number(((lpp / total) * 100).toFixed(1))
+            var drawpercent = Number(((dpp / total) * 100).toFixed(1))
+            document.getElementById('wp').innerHTML = "Win Percentage: " + winpercent + "%";
+            document.getElementById('lp').innerHTML = "Lose Percentage: " + losepercent + "%";
+            document.getElementById('dp').innerHTML = "Draw Percentage: " + drawpercent + "%";
+            localStorage.setItem('winpercent', winpercent);
+            localStorage.setItem('losepercent', losepercent);
+            localStorage.setItem('drawpercent', drawpercent);
         }
         var total = wpp + lpp + dpp;
         document.getElementById('win').onclick = function () {
@@ -44,6 +51,7 @@
     </script>
 
     <p name="demo" id="demo"></p>
+    <p name="history" id="history"></p>
     <form method="GET" action="{% url 'index' %}">
         {% csrf_token %}
         <input type="text" name="textfield" placeholder="Enter team here...">
@@ -55,25 +63,48 @@
 
     {% endif %}
 <script>
-        var money = localStorage.getItem('money');
+        var money = Number(localStorage.getItem('money')) || {{money}};
         var currencyElement = document.getElementById("currency");
         var lastClicked = localStorage.getItem('lastClicked');
+        const list = JSON.parse(localStorage.getItem('list')) || [];
+        localStorage.setItem('list', JSON.stringify(list));
+        displayList();
+
         if ({{ home_score }} > {{ away_score }} && lastClicked === 'win') {
-            winpercent = document.getElementById("wp").innerHTML;
+            var winpercent = Number(localStorage.getItem('winpercent'));
             document.getElementById("demo").innerHTML = "Winner!";
-            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(winpercent.split(": ")[1]);
+            money = money + winpercent;
+            localStorage.setItem('money', money);
+            currencyElement.innerHTML = "Currency: " + money;
+            list.push(currencyElement.innerHTML);
+            localStorage.setItem('list', JSON.stringify(list));
+
+
 
         } else if ({{ home_score }} < {{ away_score }} && lastClicked === 'lose') {
-            losepercent = document.getElementById("lp").innerHTML;
+            var losepercent = Number(localStorage.getItem('losepercent'));
             document.getElementById("demo").innerHTML = "Winner!";
-            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(losepercent.split(": ")[1]);
+            money = money + losepercent;
+            localStorage.setItem('money', money);
+            currencyElement.innerHTML = "Currency: " + money;
+            list.push(currencyElement.innerHTML);
+            localStorage.setItem('list', JSON.stringify(list));
+
         }
         else if ({{ home_score }} === {{ away_score }} && lastClicked === 'draw') {
-            drawpercent = document.getElementById("dp").innerHTML;
+            var drawpercent = Number(localStorage.getItem('drawpercent'));
             document.getElementById("demo").innerHTML = "Winner!";
-            currencyElement.innerHTML = "Currency: " + 1 -parseFloat(drawpercent.split(": ")[1]);
+            money = money + drawpercent;
+            localStorage.setItem('money', money);
+            currencyElement.innerHTML = "Currency: " + money;
+            list.push(currencyElement.innerHTML);
+            localStorage.setItem('list', JSON.stringify(list));
+
         } else {
             document.getElementById("demo").innerHTML = "Loser!";
+        }
+        function displayList() {
+
         }
 
 </script>

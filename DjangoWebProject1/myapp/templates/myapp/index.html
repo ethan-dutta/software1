@@ -17,7 +17,7 @@
         var lastClicked = null;
         var oo = 100;
         function updatePercentages() {
-            total = wpp + lpp + dpp;
+            var total = wpp + lpp + dpp;
             var winpercent = Number(((wpp / total) * 100).toFixed(1))
             var losepercent = Number(((lpp / total) * 100).toFixed(1))
             var drawpercent = Number(((dpp / total) * 100).toFixed(1))
@@ -28,7 +28,7 @@
             localStorage.setItem('losepercent', losepercent);
             localStorage.setItem('drawpercent', drawpercent);
         }
-        total = wpp + lpp + dpp;
+        var total = wpp + lpp + dpp;
         document.getElementById('win').onclick = function () {
             wpp++;
             updatePercentages();
@@ -68,9 +68,9 @@
         var lastClicked = localStorage.getItem('lastClicked');
         const list = JSON.parse(localStorage.getItem('list')) || [];
         localStorage.setItem('list', JSON.stringify(list));
-        const winners = list.filter(list => list === 'winner!').length;
+        const winners = list.filter(list => list === 'Winner!').length;
         const totall = list.length;
-        document.getelementbyid("history").innerhtml = (winners / totall * 100 || 0) + "%";
+        document.getElementById("history").innerHTML = (winners / totall * 100 || 0) + "%";
 
         if ({{ home_score }} > {{ away_score }} && lastClicked === 'win') {
             var winpercent = Number(localStorage.getItem('winpercent'));

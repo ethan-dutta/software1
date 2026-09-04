@@ -72,16 +72,6 @@
         const totall = list.length;
         document.getElementById("history").innerHTML = ((winners / totall) * 100 || 0) + "%";
 
-        //const winners = list.filter(item => item === 'Winner!').length;
-        //const totall = list.length;
-
-        //let percent = 0;
-        //if (totall > 0) {
-        //    percent = (winners / totall) * 100;
-        //}
-
-        //document.getElementById("history").innerHTML = percent.toFixed(1) + "%";
-
         if ({{ home_score }} > {{ away_score }} && lastClicked === 'win') {
             var winpercent = Number(localStorage.getItem('winpercent'));
             document.getElementById("demo").innerHTML = "Winner!";

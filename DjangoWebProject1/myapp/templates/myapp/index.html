@@ -68,9 +68,19 @@
         var lastClicked = localStorage.getItem('lastClicked');
         const list = JSON.parse(localStorage.getItem('list')) || [];
         localStorage.setItem('list', JSON.stringify(list));
-        const winners = list.filter(list => list === 'Winner!').length;
+        const winners = list.filter(item => item === 'Winner!').length;
         const totall = list.length;
-        document.getElementById("history").innerHTML = (winners / totall * 100 || 0) + "%";
+        document.getElementById("history").innerHTML = ((winners / totall) * 100 || 0) + "%";
+
+        //const winners = list.filter(item => item === 'Winner!').length;
+        //const totall = list.length;
+
+        //let percent = 0;
+        //if (totall > 0) {
+        //    percent = (winners / totall) * 100;
+        //}
+
+        //document.getElementById("history").innerHTML = percent.toFixed(1) + "%";
 
         if ({{ home_score }} > {{ away_score }} && lastClicked === 'win') {
             var winpercent = Number(localStorage.getItem('winpercent'));
@@ -107,6 +117,9 @@
 
         } else {
             document.getElementById("demo").innerHTML = "Loser!";
+            whistory = "Loser!";
+            list.push(whistory);
+            localStorage.setItem('list', JSON.stringify(list));
         }
 
     </script>

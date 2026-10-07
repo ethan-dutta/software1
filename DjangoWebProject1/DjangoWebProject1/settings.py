@@ -49,7 +49,15 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [
+                ('redis-node-1', 6379),
+                ('redis-node-2', 6379),
+                ('redis-node-3', 6379),
+            ],
+            "capacity": 1500,
+            "expiry": 60,
+            #"hosts": [("127.0.0.1", 6379)],
+
         },
     },
 }
@@ -94,7 +102,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 600,
+        # 'OPTIONS': {
+        #     'MAX_CONNS': 20,
+        # },
     }
+
 }
 
 # Password validation

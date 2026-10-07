@@ -32,6 +32,9 @@
     <Compile Include="DjangoWebProject1\asgi.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DjangoWebProject1\celery.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="manage.py" />
     <Compile Include="DjangoWebProject1\__init__.py" />
     <Compile Include="DjangoWebProject1\settings.py" />

@@ -1,5 +1,7 @@
 <html>
-<head><title></title></head>
+<head>
+    <title></title>
+</head>
 
 <body>
 
@@ -62,7 +64,7 @@
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
 
     {% endif %}
-    <script>
+<script>
         var money = Number(localStorage.getItem('money')) || {{money}};
         var currencyElement = document.getElementById("currency");
         var lastClicked = localStorage.getItem('lastClicked');
@@ -112,6 +114,38 @@
             localStorage.setItem('list', JSON.stringify(list));
         }
 
-    </script>
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/whistory/'
+        );
+
+        chatSocket.onmessage = function (e) {
+                console.log('onmessage');
+            const data = JSON.parse(e.data);
+            if (data.message) {
+                document.getElementById('history').innerHTML = data['message'];
+            } else {
+                                console.error('Message not found in data:', data);
+            }
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+
+
+        document.querySelector('#chat-message-input').onclick = function (e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };  
+    };
+
+
+
+</script>
 </body>
 </html>

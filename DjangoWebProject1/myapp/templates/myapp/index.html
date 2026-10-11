@@ -118,7 +118,7 @@
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/whistory/'
+            + '/ws/chat/history/'
         );
 
         chatSocket.onmessage = function (e) {
@@ -134,8 +134,8 @@
             console.error('Chat socket closed unexpectedly');
 
 
-        document.querySelector('#chat-message-input').onclick = function (e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
+        document.querySelector('#history').onclick = function (e) {
+            const messageInputDom = document.querySelector('#history');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message
@@ -145,7 +145,7 @@
     };
 
 
-
+    <div hx-get="#history" hx-trigger="every 10s"></div>
 </script>
 </body>
 </html>

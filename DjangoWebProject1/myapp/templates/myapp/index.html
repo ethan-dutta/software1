@@ -65,6 +65,14 @@
 
     {% endif %}
 <script>
+
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/history/'
+    );
+
         var money = Number(localStorage.getItem('money')) || {{money}};
         var currencyElement = document.getElementById("currency");
         var lastClicked = localStorage.getItem('lastClicked');
@@ -84,6 +92,12 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
+            chatSocket.send(JSON.stringify({
+                "wpp": document.getElementById("wp").innerHTML,
+                "lpp": document.getElementById("lp").innerHTML,
+                "dpp": document.getElementById("dp").innerHTML
+            }));
+
 
 
         } else if ({{ home_score }} < {{ away_score }} && lastClicked === 'lose') {
@@ -96,6 +110,12 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
+            chatSocket.send(JSON.stringify({
+                "wpp": document.getElementById("wp").innerHTML,
+                "lpp": document.getElementById("lp").innerHTML,
+                "dpp": document.getElementById("dp").innerHTML
+            }));
+
         }
         else if ({{ home_score }} === {{ away_score }} && lastClicked === 'draw') {
             var drawpercent = Number(localStorage.getItem('drawpercent'));
@@ -107,28 +127,40 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
+            chatSocket.send(JSON.stringify({
+                "wpp": document.getElementById("wp").innerHTML,
+                "lpp": document.getElementById("lp").innerHTML,
+                "dpp": document.getElementById("dp").innerHTML
+            }));
+
         } else {
             document.getElementById("demo").innerHTML = "Loser!";
             whistory = "Loser!";
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
+
+            chatSocket.send(JSON.stringify({
+                "wpp": document.getElementById("wp").innerHTML,
+                "lpp": document.getElementById("lp").innerHTML,
+                "dpp": document.getElementById("dp").innerHTML
+            }));
         }
 
-
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/history/'
-        );
-
+        //chatSocket.onmessage = function (e) {
+        //        console.log('onmessage');
+        //    const data = JSON.parse(e.data);
+        //    if (data.message) {
+        //        document.getElementById('history').innerHTML = data['message'];
+        //    } else {
+        //                        console.error('Message not found in data:', data);
+        //    }
         chatSocket.onmessage = function (e) {
-                console.log('onmessage');
             const data = JSON.parse(e.data);
-            if (data.message) {
-                document.getElementById('history').innerHTML = data['message'];
-            } else {
-                                console.error('Message not found in data:', data);
-            }
+
+            document.getElementById("wp").innerHTML = data.wpp;
+            document.getElementById("lp").innerHTML = data.lpp;
+            document.getElementById("dp").innerHTML = data.dpp;
+        };
 
         chatSocket.onclose = function (e) {
             console.error('Chat socket closed unexpectedly');

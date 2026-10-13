@@ -28,7 +28,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.group_name,
             {
-                "type": "percentage.update",
+                "type": "chat_message",
                 "wpp": data["wpp"],
                 "lpp": data["lpp"],
                 "dpp": data["dpp"],

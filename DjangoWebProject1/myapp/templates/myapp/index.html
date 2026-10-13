@@ -13,6 +13,19 @@
     <p name="drawpercent" id="dp"></p>
     <p name="currency" id="currency"></p>
     <script>
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+
+            wpp = Number(data.wpp);
+            lpp = Number(data.lpp);
+            dpp = Number(data.dpp);
+
+            localStorage.setItem("wpp", wpp);
+            localStorage.setItem("lpp", lpp);
+            localStorage.setItem("dpp", dpp);
+
+            updatePercentages();
+        };
         wpp = parseInt(localStorage.getItem('wpp')) || 0;
         lpp = parseInt(localStorage.getItem('lpp')) || 0;
         dpp = parseInt(localStorage.getItem('dpp')) || 0;
@@ -30,20 +43,33 @@
             localStorage.setItem('losepercent', losepercent);
             localStorage.setItem('drawpercent', drawpercent);
         }
+        function sendPercentages() {
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({
+                    "wpp": wpp,
+                    "lpp": lpp,
+                    "dpp": dpp,
+                }));
+            }
+        }
+
         var total = wpp + lpp + dpp;
         document.getElementById('win').onclick = function () {
             wpp++;
             updatePercentages();
+            sendPercentages();
             localStorage.setItem('lastClicked', 'win');
         };
         document.getElementById('lose').onclick = function () {
             lpp++;
             updatePercentages();
+            sendPercentages();
             localStorage.setItem('lastClicked', 'lose');
         };
         document.getElementById('draw').onclick = function () {
             dpp++;
             updatePercentages();
+            sendPercentages();
             localStorage.setItem('lastClicked', 'win');
         };
 
@@ -73,6 +99,15 @@
             + '/ws/chat/history/'
     );
 
+    function sendPercentages() {
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                "wpp": wpp,
+                "lpp": lpp,
+                "dpp": dpp,
+            }));
+        }
+    }
         var money = Number(localStorage.getItem('money')) || {{money}};
         var currencyElement = document.getElementById("currency");
         var lastClicked = localStorage.getItem('lastClicked');
@@ -92,11 +127,7 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
-            chatSocket.send(JSON.stringify({
-                "wpp": document.getElementById("wp").innerHTML,
-                "lpp": document.getElementById("lp").innerHTML,
-                "dpp": document.getElementById("dp").innerHTML
-            }));
+            sendPercentages();
 
 
 
@@ -110,11 +141,7 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
-            chatSocket.send(JSON.stringify({
-                "wpp": document.getElementById("wp").innerHTML,
-                "lpp": document.getElementById("lp").innerHTML,
-                "dpp": document.getElementById("dp").innerHTML
-            }));
+            sendPercentages();
 
         }
         else if ({{ home_score }} === {{ away_score }} && lastClicked === 'draw') {
@@ -127,11 +154,7 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
-            chatSocket.send(JSON.stringify({
-                "wpp": document.getElementById("wp").innerHTML,
-                "lpp": document.getElementById("lp").innerHTML,
-                "dpp": document.getElementById("dp").innerHTML
-            }));
+            sendPercentages();
 
         } else {
             document.getElementById("demo").innerHTML = "Loser!";
@@ -139,11 +162,7 @@
             list.push(whistory);
             localStorage.setItem('list', JSON.stringify(list));
 
-            chatSocket.send(JSON.stringify({
-                "wpp": document.getElementById("wp").innerHTML,
-                "lpp": document.getElementById("lp").innerHTML,
-                "dpp": document.getElementById("dp").innerHTML
-            }));
+            sendPercentages();
         }
 
         //chatSocket.onmessage = function (e) {
@@ -154,30 +173,24 @@
         //    } else {
         //                        console.error('Message not found in data:', data);
         //    }
-        chatSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
 
-            document.getElementById("wp").innerHTML = data.wpp;
-            document.getElementById("lp").innerHTML = data.lpp;
-            document.getElementById("dp").innerHTML = data.dpp;
-        };
 
         chatSocket.onclose = function (e) {
             console.error('Chat socket closed unexpectedly');
 
 
-        document.querySelector('#history').onclick = function (e) {
-            const messageInputDom = document.querySelector('#history');
+        document.querySelector('#win').onclick = function (e) {
+            const messageInputDom = document.querySelector('#wp');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                "wpp":wpp
             }));
             messageInputDom.value = '';
         };  
     };
 
 
-    <div hx-get="#history" hx-trigger="every 10s"></div>
+    <div hx-get="#wp" hx-trigger="every 5s"></div>
 </script>
 </body>
 </html>

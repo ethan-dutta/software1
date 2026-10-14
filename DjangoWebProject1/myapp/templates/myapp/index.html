@@ -13,6 +13,31 @@
     <p name="drawpercent" id="dp"></p>
     <p name="currency" id="currency"></p>
     <script>
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/wpp/'
+        );
+
+        wpp = parseInt(localStorage.getItem('wpp')) || 0;
+        lpp = parseInt(localStorage.getItem('lpp')) || 0;
+        dpp = parseInt(localStorage.getItem('dpp')) || 0;
+        var lastClicked = null;
+        var oo = 100;
+
+        function updatePercentages() {
+            var total = wpp + lpp + dpp;
+            var winpercent = Number(((wpp / total) * 100).toFixed(1))
+            var losepercent = Number(((lpp / total) * 100).toFixed(1))
+            var drawpercent = Number(((dpp / total) * 100).toFixed(1))
+            document.getElementById('wp').innerHTML = "Win Percentage: " + winpercent + "%";
+            document.getElementById('lp').innerHTML = "Lose Percentage: " + losepercent + "%";
+            document.getElementById('dp').innerHTML = "Draw Percentage: " + drawpercent + "%";
+            localStorage.setItem('winpercent', winpercent);
+            localStorage.setItem('losepercent', losepercent);
+            localStorage.setItem('drawpercent', drawpercent);
+        }
+
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
 
@@ -26,23 +51,7 @@
 
             updatePercentages();
         };
-        wpp = parseInt(localStorage.getItem('wpp')) || 0;
-        lpp = parseInt(localStorage.getItem('lpp')) || 0;
-        dpp = parseInt(localStorage.getItem('dpp')) || 0;
-        var lastClicked = null;
-        var oo = 100;
-        function updatePercentages() {
-            var total = wpp + lpp + dpp;
-            var winpercent = Number(((wpp / total) * 100).toFixed(1))
-            var losepercent = Number(((lpp / total) * 100).toFixed(1))
-            var drawpercent = Number(((dpp / total) * 100).toFixed(1))
-            document.getElementById('wp').innerHTML = "Win Percentage: " + winpercent + "%";
-            document.getElementById('lp').innerHTML = "Lose Percentage: " + losepercent + "%";
-            document.getElementById('dp').innerHTML = "Draw Percentage: " + drawpercent + "%";
-            localStorage.setItem('winpercent', winpercent);
-            localStorage.setItem('losepercent', losepercent);
-            localStorage.setItem('drawpercent', drawpercent);
-        }
+
         function sendPercentages() {
             if (chatSocket.readyState === WebSocket.OPEN) {
                 chatSocket.send(JSON.stringify({
@@ -92,12 +101,21 @@
     {% endif %}
 <script>
 
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
 
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/history/'
-    );
+        wpp = Number(data.wpp);
+        lpp = Number(data.lpp);
+        dpp = Number(data.dpp);
+
+        localStorage.setItem("wpp", wpp);
+        localStorage.setItem("lpp", lpp);
+        localStorage.setItem("dpp", dpp);
+
+        updatePercentages();
+    };
+
+
 
     function sendPercentages() {
         if (chatSocket.readyState === WebSocket.OPEN) {

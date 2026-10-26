@@ -1,6 +1,7 @@
 <html>
 <head>
     <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -12,6 +13,9 @@
     <p name="losepercent" id="lp"></p>
     <p name="drawpercent" id="dp"></p>
     <p name="currency" id="currency"></p>
+    <p name="winlist" id="winlist"></p>
+    <p name="loselist" id="loselist"></p>
+    <p name="drawlist" id="drawlist"></p>
     <script>
         const chatSocket = new WebSocket(
             'ws://'
@@ -24,7 +28,9 @@
         dpp = parseInt(localStorage.getItem('dpp')) || 0;
         var lastClicked = null;
         var oo = 100;
-
+        const winlist = JSON.parse(localStorage.getItem('winlist')) || [];
+        const loselist = JSON.parse(localStorage.getItem('loselist')) || [];
+        const drawlist = JSON.parse(localStorage.getItem('drawlist')) || [];
         function updatePercentages() {
             var total = wpp + lpp + dpp;
             var winpercent = Number(((wpp / total) * 100).toFixed(1))
@@ -36,6 +42,25 @@
             localStorage.setItem('winpercent', winpercent);
             localStorage.setItem('losepercent', losepercent);
             localStorage.setItem('drawpercent', drawpercent);
+            winlist.push(winpercent);
+            loselist.push(losepercent);
+            drawlist.push(drawpercent);
+            localStorage.setItem("winlist", JSON.stringify(winlist));
+            localStorage.setItem("loselist", JSON.stringify(loselist));
+            localStorage.setItem("drawlist", JSON.stringify(drawlist));
+            displayLists();
+            updateStock();
+        }
+
+        function displayLists() {
+            document.getElementById("winlist").innerText =
+                "Win List: " + winlist.join(", ");
+
+            document.getElementById("loselist").innerText =
+                "Lose List: " + loselist.join(", ");
+
+            document.getElementById("drawlist").innerText =
+                "Draw List: " + drawlist.join(", ");
         }
 
         chatSocket.onmessage = function (e) {
@@ -68,6 +93,7 @@
             updatePercentages();
             sendPercentages();
             localStorage.setItem('lastClicked', 'win');
+
         };
         document.getElementById('lose').onclick = function () {
             lpp++;
@@ -99,7 +125,7 @@
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
 
     {% endif %}
-<script>
+    <script>
 
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
@@ -129,7 +155,7 @@
         var money = Number(localStorage.getItem('money')) || {{money}};
         var currencyElement = document.getElementById("currency");
         var lastClicked = localStorage.getItem('lastClicked');
-        const list = JSON.parse(localStorage.getItem('list')) || [];
+
         localStorage.setItem('list', JSON.stringify(list));
         const winners = list.filter(item => item === 'Winner!').length;
         const totall = list.length;
@@ -204,11 +230,152 @@
                 "wpp":wpp
             }));
             messageInputDom.value = '';
-        };  
+        };
     };
 
 
     <div hx-get="#wp" hx-trigger="every 5s"></div>
-</script>
+    </script>
+    <div style="height: 400px;">
+        <canvas id="stockChart"></canvas>
+    </div>
+    <script>
+        let labels = [];
+        let chartType = "line";
+        let stockChart;
+
+        const ctx = document.getElementById("stockChart");
+        console.log("labels:", labels);
+        console.log("winlist:", winlist);
+        console.log("loselist:", loselist);
+        console.log("drawlist:", drawlist);
+        function createChart() {
+            if (stockChart) {
+                stockChart.destroy();
+            }
+
+            stockChart = new Chart(ctx, {
+                type: chartType,
+
+                data: {
+                    labels: labels,
+
+                    datasets: [
+                        {
+                            label: "Win%",
+                            data: winlist,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        },
+                        {
+                            label: "Lose%",
+                            data: loselist,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        },
+
+                        {
+                            label: "Draw%",
+                            data: drawlist,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        }
+
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+
+                    interaction: {
+                        intersect: false,
+                        mode: "index"
+                    },
+
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: "black"
+                            }
+                        },
+
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                color: "black"
+                            }
+                        }
+                    },
+
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "black"
+                            }
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y.toFixed(2) + "%";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        //function showLine() {
+        //    chartType = "line";
+        //    createChart();
+        //}
+
+        //function showBar() {
+        //    chartType = "bar";
+        //    createChart();
+        //}
+
+        async function updateStock() {
+            try {
+
+                const now = new Date();
+
+                const time =
+                    now.getHours().toString().padStart(2, "0") +
+                    ":" +
+                    now.getMinutes().toString().padStart(2, "0") +
+                    ":" +
+                    now.getSeconds().toString().padStart(2, "0");
+
+                labels.push(time);
+
+                if (labels.length > 60) {
+                    labels.shift();
+                }
+
+                stockChart.data.labels = labels;
+
+                stockChart.update();
+
+            } catch (error) {
+                console.log("Error:", error);
+            }
+        }
+
+
+
+        createChart();
+        updateStock();
+
+    </script>
+
+
 </body>
-</html>
+</html >

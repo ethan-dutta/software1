@@ -8,7 +8,12 @@ from .serializer import MessageSerializer
 from rest_framework.views import APIView
 from django.shortcuts import render
 import requests
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
+@cache_page(60 * 15)
+@vary_on_cookie
 def index(request):
     context = {}
     money = 1000
@@ -64,3 +69,43 @@ class MessagePostList(APIView):
 
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class cachequerysetmixin:
+    """add caching to any listapiview"""
+    cache_key = None
+    cache_timeout = 300
+    
+    def get_queryset(self):
+        if self.cache_key:
+            cached = cache.get(self.cache_key)
+            if cached:
+                return cached
+            
+            queryset = super().get_queryset()
+            cache.set(self.cache_key, queryset, self.cache_timeout)
+            return queryset
+        
+        return super().get_queryset()
+
+# usage
+# class storylist(cachequerysetmixin, listapiview):
+#     cache_key = 'all_stories'
+#     serializer_class = storyserializer
+    
+#     def get_queryset(self):
+#         return story.objects.all().select_related('category')\
+
+# cache.delete('all_stories')
+# # clear pattern (with django-redis)
+# from django_redis import get_redis_connection
+# redis_client = get_redis_connection("default")
+# keys = redis_client.keys("myapp_story*")
+# if keys:
+#     redis_client.delete(*keys)
+# # or clear everything (use cautiously!)
+# cache.clear()
+
+# class storyadmin(admin.modeladmin):
+#     def save_model(self, request, obj, form, change):
+#         super().save_model(request, obj, form, change)
+#         cache.delete('all_stories')  # clear cache on save

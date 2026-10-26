@@ -7,6 +7,8 @@ import myapp
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 import myapp.views
+from django.conf import settings
+from django.conf.urls.static import static
 """
 DjangoWebProject1 URL Configuration
 
@@ -48,12 +50,13 @@ router.register(r"users", UserViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API
-
+import debug_toolbar
 urlpatterns = [
     path("", include("myapp.url")),
     path("", include(router.urls)),
     path("index/", myapp.views.index, name="index"),
     path('admin/', admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-    ]
+    path("__debug__/", include(debug_toolbar.urls)),
+    ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

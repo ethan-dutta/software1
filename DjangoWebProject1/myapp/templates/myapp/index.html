@@ -125,7 +125,7 @@
     {{home_team}} {{ home_score }} : {{away_score}} {{away_team}}
 
     {% endif %}
-    <script>
+<script>
 
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
@@ -209,33 +209,26 @@
             sendPercentages();
         }
 
-        //chatSocket.onmessage = function (e) {
-        //        console.log('onmessage');
-        //    const data = JSON.parse(e.data);
-        //    if (data.message) {
-        //        document.getElementById('history').innerHTML = data['message'];
-        //    } else {
-        //                        console.error('Message not found in data:', data);
-        //    }
+        chatSocket.onmessage = function (e) {
+                console.log('onmessage');
+            const data = JSON.parse(e.data);
+            if (data.message) {
+                document.getElementById('history').innerHTML = data['message'];
+            } else {
+                                console.error('Message not found in data:', data);
+            }
 
 
         chatSocket.onclose = function (e) {
             console.error('Chat socket closed unexpectedly');
 
 
-        document.querySelector('#win').onclick = function (e) {
-            const messageInputDom = document.querySelector('#wp');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                "wpp":wpp
-            }));
-            messageInputDom.value = '';
-        };
+
     };
 
 
-    <div hx-get="#wp" hx-trigger="every 5s"></div>
-    </script>
+            <div hx-get="#wp" hx-trigger="every 5s"></div>
+</script>
     <div style="height: 400px;">
         <canvas id="stockChart"></canvas>
     </div>

@@ -46,23 +46,6 @@ INSTALLED_APPS = [
 ]
 ASGI_APPLICATION = 'DjangoWebProject1.asgi.application'
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": 
-#         "channels.layers.InMemoryChannelLayer"
-#     }
-# }
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379/1',  # Use database 1
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         },
-#         'KEY_PREFIX': 'myapp',  # Optional: Prefix all cache keys
-#     }
-# }
-
 
 CHANNEL_LAYERS = {
     "default": {
@@ -71,7 +54,6 @@ CHANNEL_LAYERS = {
             "hosts": [("127.0.0.1", 6379)],
             "capacity": 1500,
             "expiry": 60,
-            #"hosts": [("127.0.0.1", 6379)],
 
         },
     },
@@ -153,7 +135,7 @@ CACHES = {
         'LOCATION': 'redis://127.0.0.1:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PASSWORD': 'your-redis-password',  # if you set one
+            'PASSWORD': 'your-redis-password',
             'SOCKET_CONNECT_TIMEOUT': 5,
             'SOCKET_TIMEOUT': 5,
             'CONNECTION_POOL_KWARGS': {
@@ -161,8 +143,8 @@ CACHES = {
                 'retry_on_timeout': True
             }
         },
-        'KEY_PREFIX': 'myapp',  # Prevents key collisions
-        'TIMEOUT': 300,  # Default timeout: 5 minutes
+        'KEY_PREFIX': 'myapp', 
+        'TIMEOUT': 300,
     }
 }
 

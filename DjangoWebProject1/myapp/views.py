@@ -87,25 +87,3 @@ class cachequerysetmixin:
         
         return super().get_queryset()
 
-# usage
-# class storylist(cachequerysetmixin, listapiview):
-#     cache_key = 'all_stories'
-#     serializer_class = storyserializer
-    
-#     def get_queryset(self):
-#         return story.objects.all().select_related('category')\
-
-# cache.delete('all_stories')
-# # clear pattern (with django-redis)
-# from django_redis import get_redis_connection
-# redis_client = get_redis_connection("default")
-# keys = redis_client.keys("myapp_story*")
-# if keys:
-#     redis_client.delete(*keys)
-# # or clear everything (use cautiously!)
-# cache.clear()
-
-# class storyadmin(admin.modeladmin):
-#     def save_model(self, request, obj, form, change):
-#         super().save_model(request, obj, form, change)
-#         cache.delete('all_stories')  # clear cache on save
